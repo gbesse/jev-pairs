@@ -1,0 +1,9 @@
+# Purpose: Exclude Python build, local data and judgment cache artifacts.
+__pycache__/
+.venv/
+*.egg-info/
+dist/
+.local/
+local-data/
+*.sqlite*
+.jev-cache*

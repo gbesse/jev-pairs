@@ -14,6 +14,10 @@ python -m examples.offline_demo
 
 Fixtures are synthetic, not measured Jev output.
 
+## Audit a blocking rule offline
+
+Run `python -m examples.blocking_audit` to compare candidate counts and labeled-match recall across three blocking settings on a synthetic product catalog. The JSON output highlights the trade-off: a stricter rule can save pair judgments while silently dropping known matches. Replace the fixture and its labeled pairs with a reviewed sample from your own corpus before choosing a rule; these results are not a quality benchmark.
+
 ## Call real Jev
 
 Set `TYPESAFE_API_KEY` before supplying a reviewed provider adapter. Paid requests should go to `api.typesafe.ai`; this alpha leaves its live CLI adapter unwired rather than implying an unverified network path. `python scripts/live_smoke.py` reports that boundary and makes zero requests.

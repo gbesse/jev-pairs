@@ -4,6 +4,12 @@ from pathlib import Path
 from .core import estimate,dedupe,cluster,contradict,FakeJev
 
 def main(argv=None):
+    arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments == ["optimizer-demo"]:
+        # Installed-package demonstration; fixtures are local and no live adapter is used.
+        from .optimizer_demo import demo
+        print(json.dumps(demo(), indent=2, sort_keys=True))
+        return
     p=argparse.ArgumentParser(prog="jev-pairs");p.add_argument("command",choices=["estimate","dedupe","cluster","contradict"]);p.add_argument("input");p.add_argument("--rule",required=True);p.add_argument("--out");p.add_argument("--fake");p.add_argument("--pack",type=int,default=1);p.add_argument("--budget-usd",type=float,default=float("inf"));a=p.parse_args(argv)
     try:
         items=json.loads(Path(a.input).read_text());rule=json.loads(Path(a.rule).read_text())

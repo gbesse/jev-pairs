@@ -18,6 +18,24 @@ Fixtures are synthetic, not measured Jev output.
 
 Run `python -m examples.blocking_audit` to compare candidate counts and labeled-match recall across three blocking settings on a synthetic product catalog. The JSON output highlights the trade-off: a stricter rule can save pair judgments while silently dropping known matches. Replace the fixture and its labeled pairs with a reviewed sample from your own corpus before choosing a rule; these results are not a quality benchmark.
 
+## Semantic Optimizer pilot
+
+`PairPlan`, `PairEngine`, `run_pair_plan`, `select_pair_plan` and
+`validate_pair_plan` provide an empirical, budget-bounded pair-plan selector.
+Tune on completely labeled pairs, including blocked matches, then validate the
+frozen plan on a disjoint holdout. An infeasible plan or exhausted budget is
+reported explicitly, not marketed as a quality guarantee.
+
+```sh
+python -m examples.semantic_optimizer
+jev-pairs optimizer-demo
+```
+
+Both use synthetic fixture engines and make zero network calls. Costs are declared
+integer units, not measured vendor prices. This first increment is not a SQL
+optimizer and has not run LOTUS or SemBench. See the
+[method, holdout protections and real-benchmark gates](docs/semantic-optimizer-pilot.md).
+
 ## Call real Jev
 
 Set `TYPESAFE_API_KEY` before supplying a reviewed provider adapter. Paid requests should go to `api.typesafe.ai`; this alpha leaves its live CLI adapter unwired rather than implying an unverified network path. `python scripts/live_smoke.py` reports that boundary and makes zero requests.

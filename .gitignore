@@ -7,3 +7,6 @@ dist/
 local-data/
 *.sqlite*
 .jev-cache*
+.env
+.env.*
+!.env.example

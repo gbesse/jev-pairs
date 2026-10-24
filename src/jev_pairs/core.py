@@ -48,12 +48,16 @@ class FakeJev:
     def __init__(self,fixtures=None):self.fixtures=fixtures or {};self.calls=[]
     def judge(self,pairs,rule):
         self.calls.append(pairs);return [self.fixtures.get("|".join(sorted([str(a.get("id")),str(b.get("id"))])),.5) for a,b in pairs]
+def _probability(value):
+    if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value) or not 0<=value<=1:
+        raise ValueError("Probabilité de lot invalide / Invalid batch probability / Probabilidad de lote no válida")
+    return float(value)
 def _judge(items,rule,provider,blocking,cache,certain_below,certain_above,pack,budget_usd):
     judged=[]; pending=[]; spent=0; skipped=[]
     for i,j in candidate_pairs(items,rule,blocking):
         a,b=items[i],items[j]; key=pair_key(a,b,rule); score=overlap(a,b,rule["key_fields"])
         exact=all(normalize(a.get(k,""))==normalize(b.get(k,"")) for k in rule["key_fields"])
-        if key in cache: probability=cache[key];source="cache"
+        if key in cache: probability=_probability(cache[key]);source="cache"
         elif exact or score>=certain_above: probability=1.;source="cascade-match"
         elif score<=certain_below: probability=0.;source="cascade-nonmatch"
         else: pending.append((i,j,key));continue
@@ -62,7 +66,11 @@ def _judge(items,rule,provider,blocking,cache,certain_below,certain_above,pack,b
         batch=pending[start:start+max(1,pack)]; states=[(items[i],items[j]) for i,j,_ in batch]
         cost=sum(math.ceil(len(canonical({"left":a,"right":b}))/4) for a,b in states)*PRICE/1_000_000
         if spent+cost>budget_usd: skipped.extend((i,j) for i,j,_ in batch);continue
-        probabilities=provider.judge(states,rule);spent+=cost
+        probabilities=provider.judge(states,rule)
+        if not isinstance(probabilities,(list,tuple)) or len(probabilities)!=len(batch):
+            raise ValueError("Taille de lot incohérente / Batch size mismatch / Tamaño de lote incoherente")
+        probabilities=[_probability(value) for value in probabilities]
+        spent+=cost
         for (i,j,key),probability in zip(batch,probabilities):cache[key]=probability;judged.append({"left":i,"right":j,"probability":probability,"source":"jev"})
     return judged,skipped,{"estimated_cost_usd":spent,"bought_pairs":sum(x["source"]=="jev" for x in judged)}
 def conflicts(judged,threshold=.5):

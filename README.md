@@ -61,3 +61,11 @@ Run `python -m compileall -q src tests`, `python -m unittest discover -s tests`,
 [DecisionPacks](https://github.com/gbesse/decisionpacks), [Question Forge](https://github.com/gbesse/question-forge), and [jev-rerank-server](https://github.com/gbesse/jev-rerank-server) cover reusable rules, question design, and ranked retrieval.
 
 Independent project; not affiliated with TypeSafe AI. [API documentation](https://docs.typesafe.ai/api) · [Jev 1.13 model notes](https://docs.typesafe.ai/model-jaggedness/jev-1.13/)
+
+## Batch contract / Contrat de lot / Contrato de lote
+
+FR — Chaque lot fournisseur doit rendre exactement une probabilité finie dans [0,1] par paire. Le lot entier est validé avant insertion en cache ; les booléens et valeurs de cache invalides sont refusés.
+
+EN — Each provider batch must return exactly one finite probability in [0,1] per pair. The whole batch is validated before caching; booleans and invalid cached values are rejected.
+
+ES — Cada lote del proveedor debe devolver exactamente una probabilidad finita en [0,1] por pareja. Se valida el lote completo antes de almacenarlo; se rechazan booleanos y valores de caché inválidos.

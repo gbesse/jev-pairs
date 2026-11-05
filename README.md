@@ -69,3 +69,12 @@ FR — Chaque lot fournisseur doit rendre exactement une probabilité finie dans
 EN — Each provider batch must return exactly one finite probability in [0,1] per pair. The whole batch is validated before caching; booleans and invalid cached values are rejected.
 
 ES — Cada lote del proveedor debe devolver exactamente una probabilidad finita en [0,1] por pareja. Se valida el lote completo antes de almacenarlo; se rechazan booleanos y valores de caché inválidos.
+
+
+## 2026-11-05 — FR / EN / ES
+
+FR : `audit_cluster_links(item_ids, edges, threshold)` expose les paires non jugées et les contradictions au sein des composantes reliées. A≈B et B≈C ne prouvent pas A≈C.200 éléments maximum ; aucun appel Jev ni fusion de données.
+
+EN: `audit_cluster_links(item_ids, edges, threshold)` exposes unjudged pairs and contradictions within connected components. A≈B and B≈C do not prove A≈C.200 items maximum; no Jev call or data merging.
+
+ES: `audit_cluster_links(item_ids, edges, threshold)` expone pares sin juzgar y contradicciones en componentes conectados. A≈B y B≈C no prueban A≈C. Máximo200 elementos; sin llamada Jev ni fusión de datos.

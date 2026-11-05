@@ -98,3 +98,25 @@ def contradict(items,rule,provider=None,**kwargs):
     result=dedupe(items,rule,provider,**kwargs);result["contradictions"]=[x for x in result["judged_pairs"] if x["probability"]>=kwargs.get("threshold",.5)];return result
 def link(left,right,rule,provider=None,**kwargs):
     items=left+right;result=dedupe(items,rule,provider,**kwargs);result["links"]=[x for x in result["judged_pairs"] if x["left"]<len(left)<=x["right"]];return result
+
+
+def audit_cluster_links(item_ids, edges, threshold=.5):
+    error="Liens de groupe invalides / Invalid cluster links / Vínculos de grupo inválidos"
+    if not isinstance(item_ids,list)or len(item_ids)>200 or any(not isinstance(x,str)or not x for x in item_ids)or len(set(item_ids))!=len(item_ids):raise ValueError(error)
+    threshold=_probability(threshold);parent={x:x for x in item_ids};known={}
+    def root(x):
+        while parent[x]!=x:parent[x]=parent[parent[x]];x=parent[x]
+        return x
+    for e in edges:
+        a,b=e['left'],e['right'];p=_probability(e['probability'])
+        if a not in parent or b not in parent or a==b:raise ValueError(error)
+        pair=tuple(sorted((a,b)))
+        if pair in known:raise ValueError(error)
+        known[pair]=p
+        if p>=threshold:parent[root(a)]=root(b)
+    components={}
+    for x in item_ids:components.setdefault(root(x),[]).append(x)
+    out=[]
+    for ids in components.values():
+        pairs=list(itertools.combinations(sorted(ids),2));out.append({'ids':sorted(ids),'unjudged_pairs':[list(p)for p in pairs if p not in known],'contradicting_pairs':[list(p)for p in pairs if p in known and known[p]<threshold],'pairwise_confirmed':all(p in known and known[p]>=threshold for p in pairs)})
+    return {'components':out,'threshold':threshold,'transitivity_assumed':False}
